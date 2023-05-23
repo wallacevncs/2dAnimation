@@ -59,12 +59,25 @@ void updatePlayerPosition() {
         playerX = x_min;
     }
 
+    if(playerX < x_min){
+    	playerX = x_min;
+    }
+
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    switch(key) {
+    	case 'a':
+    	case 'A':
+    		isJumping = true;
+            break;
+    }
 }
 
 void specialKeys(int key, int x, int y) {
     switch(key) {
        case GLUT_KEY_LEFT:
-    	    playerDirection = 25.0f;
+    	    playerDirection = 180.0f;
     	    updatePlayerPosition();
             break;
         case GLUT_KEY_RIGHT:
@@ -72,12 +85,16 @@ void specialKeys(int key, int x, int y) {
             updatePlayerPosition();
             break;
         case GLUT_KEY_UP:
-            isJumping = true;
+        	playerDirection = 25.0f;
+        	updatePlayerPosition();
             break;
         case GLUT_KEY_DOWN:
         	playerDirection = -25.0f;
         	updatePlayerPosition();
             break;
+        case 'a':
+        	isJumping = true;
+        	break;
     }
 }
 
@@ -103,7 +120,6 @@ void drawSnake(){
 		snakeVisible = false;
 		snakeY	     = 0;
 	}
-
 }
 
 
@@ -295,18 +311,12 @@ void drawFloor()
 void checkSnakeCollision() {
 
 
-	if(snake[0].x >= (playerX - 0.02) && snake[0].x <= (playerX + 0.1) && (snake[0].y + snakeY) > -1){
+	if(snake[0].x >= (playerX - 0.5) && snake[0].x <= (playerX + 0.8) && (snake[0].y + snakeY) > -1){
 		life--;
 		snakeVisible = false;
 	}
-
-	//std::cout << "Start player Y: " << playerX - 0.03 << std::endl;
-	//std::cout << "Snake head x: " << snake[0].x << std::endl;
-	//std::cout << "End player Y: " << playerX + 0.1 << std::endl;
-	//std::cout << "Snake head y: " << snake[0].y + snakeY << std::endl;
-	//std::cout << "End Snake head x: " << snake[0].x << std::endl;
-
 }
+
 void checkLifeCollision(){
 	if(playerX >= lifeX - 0.3 && playerX <= lifeX + 0.3){
 		life++;
@@ -522,6 +532,7 @@ void doFrame(int v) {
     glutTimerFunc(20,doFrame,0);
 }
 
+
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE);
@@ -532,6 +543,7 @@ int main(int argc, char** argv) {
     init();
 
     glutSpecialFunc(specialKeys);
+    glutKeyboardFunc(keyboard);
     glutDisplayFunc(display);
 
     glutTimerFunc(20,doFrame,0);
